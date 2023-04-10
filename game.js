@@ -19,7 +19,7 @@ function generateNewLetters() {
   ];
 }
 
-async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetters, io, socket) {
+async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetters, io, playerSocket) {
   currentPlayer.timer = 10;
   io.to(currentPlayer.playerId).emit('timerUpdate', currentPlayer.timer);
 
@@ -37,7 +37,7 @@ async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetter
         playerStates.push(currentPlayer);
       } else {
         playerStates.push(currentPlayer);
-        startNewRound(room, playerStates, io, socket);
+        startNewRound(room, playerStates, io, playerSocket);
       }
     }
   }, 1000);
@@ -57,13 +57,13 @@ async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetter
       io.to(currentPlayer.playerId).emit('gameOver');
     } else {
       playerStates.push(currentPlayer);
-      startNewRound(room, playerStates, io, socket);
+      startNewRound(room, playerStates, io, playerSocket);
     }
 
-    socket.removeListener('submitWord', submitWordListener);
+    playerSocket.removeListener('submitWord', submitWordListener);
   };
 
-  socket.on('submitWord', submitWordListener);
+  playerSocket.on('submitWord', submitWordListener);
 }
 
 function startNewRound(room, playerStates, io, socket) {
@@ -73,7 +73,8 @@ function startNewRound(room, playerStates, io, socket) {
   });
 
   const currentPlayer = playerStates.shift();
-  handlePlayerTurn(room, currentPlayer, playerStates, newLetters, io, socket);
+  const playerSocket = io.sockets.sockets.get(currentPlayer.playerId);
+  handlePlayerTurn(room, currentPlayer, playerStates, newLetters, io, playerSocket);
 }
 
 async function isValidWord(word, currentLetters) {
