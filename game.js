@@ -19,7 +19,7 @@ function generateNewLetters() {
   ];
 }
 
-async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetters, io, playerSocket) {
+async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetters, io) {
   currentPlayer.timer = 10;
   io.to(currentPlayer.playerId).emit('timerUpdate', currentPlayer.timer);
 
@@ -37,7 +37,7 @@ async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetter
         playerStates.push(currentPlayer);
       } else {
         playerStates.push(currentPlayer);
-        startNewRound(room, playerStates, io, playerSocket);
+        startNewRound(room, playerStates, io);
       }
     }
   }, 1000);
@@ -57,24 +57,25 @@ async function handlePlayerTurn(room, currentPlayer, playerStates, currentLetter
       io.to(currentPlayer.playerId).emit('gameOver');
     } else {
       playerStates.push(currentPlayer);
-      startNewRound(room, playerStates, io, playerSocket);
+      startNewRound(room, playerStates, io);
     }
 
+    const playerSocket = io.sockets.sockets.get(currentPlayer.playerId);
     playerSocket.removeListener('submitWord', submitWordListener);
   };
 
+  const playerSocket = io.sockets.sockets.get(currentPlayer.playerId);
   playerSocket.on('submitWord', submitWordListener);
 }
 
-function startNewRound(room, playerStates, io, socket) {
+function startNewRound(room, playerStates, io) {
   const newLetters = generateNewLetters();
   room.players.forEach(playerId => {
     io.to(playerId).emit('newLetters', newLetters);
   });
 
   const currentPlayer = playerStates.shift();
-  const playerSocket = io.sockets.sockets.get(currentPlayer.playerId);
-  handlePlayerTurn(room, currentPlayer, playerStates, newLetters, io, playerSocket);
+  handlePlayerTurn(room, currentPlayer, playerStates, newLetters, io);
 }
 
 async function isValidWord(word, currentLetters) {
@@ -87,9 +88,9 @@ async function isValidWord(word, currentLetters) {
   return false;
 }
 
-function startGameForRoom(room, io, socket) {
+function startGameForRoom(room, io) {
   const playerStates = initializePlayerStates(room);
-  startNewRound(room, playerStates, io, socket);
+  startNewRound(room, playerStates, io);
 }
 
 module.exports = {
