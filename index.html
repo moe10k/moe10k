@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiplayer Word Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <h1>Multiplayer Word Game</h1>
+    <div id="game-rooms">
+      <h2>Game Rooms</h2>
+      <input type="text" id="room-id" placeholder="Room ID">
+      <button id="join-btn">Join Room</button>
+      <button id="create-btn">Create Room</button>
+    </div>
+    <div id="game-area" style="display: none;">
+      <p>Letters: <span id="letters"></span></p>
+      <p>Time: <span id="timer"></span></p>
+      <p>Lives: <span id="lives"></span></p>
+      <p>Score: <span id="score"></span></p>
+      <input type="text" id="word-input">
+      <button id="submit-word">Submit Word</button>
+      <button id="start-btn">Start Game</button>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
