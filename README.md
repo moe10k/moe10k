@@ -1,5 +1,5 @@
 <h1>Mohammad Kiyam
-  <br/>Major : Computer Engineer</h1>
+  <br/>Major : Computer Science</h1>
 
 <h2>👨‍💻 Software Development Projects:</h2>
 
